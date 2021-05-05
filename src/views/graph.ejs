@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nivel de agua</title>
+    
+</head>
+<body>
+    <nav class="navbar navbar-dark bg-dark">
+        <a href='/' class="navbar-brand">Gráfica Nivel de agua</a>
+    </nav>
+    <%var dati = datos%>
+    
+    <div id="chart_div" style="width: 100%; height: 500px;"></div>
+
+    <div class="container">
+        <div class="row mt-5">
+            <div clas="col-md-7">
+                <table class="table table-bordered table-hover">
+                    <thead >
+                        <tr>
+                            <th>n°</th>
+                            <th>Referencia</th>
+                            <th>Lectura</th>
+                            <th>Fecha Lectura</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% if (datos){%>
+                            <% for(var i=0; i < datos.length; i++){ %>
+                                <tr>
+                                    <td><%-(i+1) %></td>
+                                    <td><%- datos[i].referencia %></td>
+                                    <td><%- datos[i].lectura %></td>
+                                    <td><%- datos[i].fechalectura %></td>
+                                    <td>
+                                        <a href="/delete/<%-datos[i].id%>" class="btn btn-danger">Borrar</a>
+                                        <a href="/update/<%-datos[i].id%>" class="btn btn-info">Editar</a>
+                                    </td>
+                                </tr>
+                            <%}%>
+                        <%} %>
+                    </tbody>
+                </table>
+            </div>
+            <div clas="col-md-5">
+                <div class="card-body">
+                    <form action="/addWaterEntry" method="POST">
+                        <div class="form-group">
+                            <input type="text" name="referencia" placeholder="Sensor referencia" class="form-control">
+                            <input type="text" id="refCisterna" hidden="true" value="<%-datos[0].referencia%>" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <input type="number" step="0.1" name="lectura" placeholder="Porcentaje" class="form-control">
+                            <%for(let i=0; i < datos.length; i++){%>
+                                <input type="text" name="valores" hidden="true" value="<%-datos[i].lectura%>" class="form-control">
+                            <%}%>
+                        </div>
+                        <div class="form-group">
+                            <input type="text" name="fechalectura" placeholder="Fecha de lectura" class="form-control">
+                            <%for(let i=0; i < datos.length; i++){%>
+                                <input type="text" name="fechaslectura" hidden="true" value="<%-datos[i].fechalectura%>">
+                            <%}%>
+                        </div>
+                        <button type="submit" class="btn btn-primary">
+                            Guardar lectura
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript">
+        var valores = document.getElementsByName("valores");
+        var fechasLectura = document.getElementsByName("fechaslectura");
+        var cisterna = document.getElementById("refCisterna");
+        var arregloFechas = Array();
+        var arregloLecturas = Array();
+        valores.forEach(lectura => {
+            console.log(lectura.value);
+            arregloLecturas.push(Number(lectura.value));
+        });
+        fechasLectura.forEach(fechaLectura => {
+            arregloFechas.push(fechaLectura.value)
+        });
+        let arregloInvertidoLecturas = Array();
+        let arregloInvertidoFechas = Array();
+        let llavesArreglo= Object.keys(arregloLecturas).reverse();
+        let llavesArregloFecha = Object.keys(arregloFechas).reverse();
+        llavesArreglo.forEach(lectura => arregloInvertidoLecturas.push(arregloLecturas[lectura]));
+        llavesArregloFecha.forEach(fecha => arregloInvertidoFechas.push(arregloFechas[fecha]))
+        google.charts.load('current', {'packages':['corechart']});
+        google.charts.setOnLoadCallback(drawChart);
+
+        function drawChart() {
+        var data = google.visualization.arrayToDataTable([
+          ['Porcentaje de agua', 'Agua restante'],
+          [arregloInvertidoFechas[0],  arregloInvertidoLecturas[0]],
+          [arregloInvertidoFechas[1],  arregloInvertidoLecturas[1]],
+          [arregloInvertidoFechas[2],  arregloInvertidoLecturas[2]],
+          [arregloInvertidoFechas[3],  arregloInvertidoLecturas[3]],
+          [arregloInvertidoFechas[4],  arregloInvertidoLecturas[4]],
+          [arregloInvertidoFechas[5],  arregloInvertidoLecturas[5]],
+          [arregloInvertidoFechas[6],  arregloInvertidoLecturas[6]],
+          [arregloInvertidoFechas[7],  arregloInvertidoLecturas[7]],
+          [arregloInvertidoFechas[8],  arregloInvertidoLecturas[8]],
+          [arregloInvertidoFechas[9],  arregloInvertidoLecturas[9]],
+          [arregloInvertidoFechas[10],  arregloInvertidoLecturas[10]],
+          [arregloInvertidoFechas[11],  arregloInvertidoLecturas[11]],
+          [arregloInvertidoFechas[12],  arregloInvertidoLecturas[12]],
+          [arregloInvertidoFechas[13],  arregloInvertidoLecturas[13]],
+          [arregloInvertidoFechas[14],  arregloInvertidoLecturas[14]],
+          [arregloInvertidoFechas[15],  arregloInvertidoLecturas[15]],
+          [arregloInvertidoFechas[16],  arregloInvertidoLecturas[16]],
+          [arregloInvertidoFechas[17],  arregloInvertidoLecturas[17]],
+          [arregloInvertidoFechas[18],  arregloInvertidoLecturas[18]],
+          [arregloInvertidoFechas[19],  arregloInvertidoLecturas[19]],
+          [arregloInvertidoFechas[20],  arregloInvertidoLecturas[20]],
+        ]);
+
+        var options = {
+          title: 'Agua en ' + cisterna.value,
+          hAxis: {title: 'Porcentaje de agua',  titleTextStyle: {color: '#333'}},
+          vAxis: {minValue: 0}
+        };
+
+        var chart = new google.visualization.AreaChart(document.getElementById('chart_div'));
+        chart.draw(data, options);
+      }
+    
+    </script>
+</html>
